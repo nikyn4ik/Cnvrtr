@@ -20,7 +20,7 @@
     </Window.Background>
 
     <Grid>
-        <Button Content="Saved" HorizontalAlignment="Left" Margin="356,305,0,0" 
+        <Button Content="Save" HorizontalAlignment="Left" Margin="356,305,0,0" 
                 Background="#002F6C" BorderBrush="White" BorderThickness="2"
                 FontFamily="Microsoft JhengHei UI Light" FontSize="14"
                 Foreground="White" VerticalAlignment="Top" Height="50" Width="197" Click="BTN_Save"/>
