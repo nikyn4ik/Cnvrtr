@@ -22,7 +22,7 @@ namespace Cnvrtr
             SelectedFiles = new ObservableCollection<FileItem>();
         }
 
-        private void BTN_Select(object sender, RoutedEventArgs e)
+        private void BTN_Select(object sender, RoutedEventArgs e) //SELECT
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Multiselect = true;
@@ -34,7 +34,7 @@ namespace Cnvrtr
             }
         }
 
-        private void AddFile(string[] filePaths)
+        private void AddFile(string[] filePaths) //ADD
         {
             foreach (string filePath in filePaths)
             {
@@ -48,17 +48,23 @@ namespace Cnvrtr
             }
         }
 
-        private void BTN_Save(object sender, RoutedEventArgs e)
+        private void BTN_Save(object sender, RoutedEventArgs e) //SAVE
         {
-            if (fileList.AlternationCount == 0)
+            if (SelectedFiles.Count == 0)
             {
-                MessageBox.Show("No file selected.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowErrorMessage("No file selected.");
+                return;
+            }
+
+            if (fileList.SelectedItem == null)
+            {
+                ShowErrorMessage("No file selected.");
                 return;
             }
 
             if (ComboBox.SelectedItem == null)
             {
-                MessageBox.Show("No format selected.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowErrorMessage("No format selected.");
                 return;
             }
 
@@ -79,14 +85,18 @@ namespace Cnvrtr
                 }
                 else if (selectedFormat == "docx")
                 {
-                    ConvertToDocx(sourceFilePath, destinationFilePath);
+                    if (!ConvertToDocx(sourceFilePath, destinationFilePath))
+                    {
+                        ShowErrorMessage("Failed to convert to DOCX.");
+                        return;
+                    }
                 }
             }
 
             OpenFolder(saveFolderPath);
         }
 
-        private void ConvertToPdf(string sourceFilePath, string destinationFilePath)
+        private void ConvertToPdf(string sourceFilePath, string destinationFilePath) //PDF
         {
             using (FileStream sourceStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read))
             {
@@ -111,10 +121,11 @@ namespace Cnvrtr
             }
         }
 
-        private void ConvertToDocx(string sourceFilePath, string destinationFilePath)
+        private bool ConvertToDocx(string sourceFilePath, string destinationFilePath) //DOCX
         {
             Microsoft.Office.Interop.Word.Application wordApplication = new Microsoft.Office.Interop.Word.Application();
             Microsoft.Office.Interop.Word.Document wordDocument = null;
+            bool success = false;
 
             try
             {
@@ -124,6 +135,13 @@ namespace Cnvrtr
                 object fontSize = 12;
 
                 wordDocument.SaveAs2(destinationFilePath, WdSaveFormat.wdFormatXMLDocument);
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("Error converting to DOCX: " + ex.Message);
+                success = false;
             }
             finally
             {
@@ -133,9 +151,16 @@ namespace Cnvrtr
                 ReleaseObject(wordDocument);
                 ReleaseObject(wordApplication);
             }
+
+            return success;
         }
 
-        private void ReleaseObject(object obj)
+        private void ShowErrorMessage(string message) //Exception while releasing the object
+        {
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void ReleaseObject(object obj) //Perform garbage collection
         {
             try
             {
@@ -145,7 +170,7 @@ namespace Cnvrtr
             catch (Exception ex)
             {
                 obj = null;
-                MessageBox.Show("Error releasing object: " + ex.ToString());
+                ShowErrorMessage("Error releasing object: " + ex.ToString());
             }
             finally
             {
@@ -153,12 +178,12 @@ namespace Cnvrtr
             }
         }
 
-        private void OpenFolder(string folderPath)
+        private void OpenFolder(string folderPath) // Open the folder in File Explorer
         {
             Process.Start("explorer.exe", folderPath);
         }
 
-        private void ListView_MouseClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ListView_MouseClick(object sender, System.Windows.Input.MouseButtonEventArgs e) //Mouse click on listview
         {
             if (fileList.SelectedItem is FileItem selectedItem)
             {
@@ -166,7 +191,7 @@ namespace Cnvrtr
             }
         }
 
-        public class FileItem
+        public class FileItem // Represents file list
         {
             public string Name { get; set; }
             public long Size { get; set; }

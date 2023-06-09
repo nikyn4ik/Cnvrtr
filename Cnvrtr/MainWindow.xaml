@@ -26,13 +26,14 @@
                 Foreground="White" VerticalAlignment="Top" Height="50" Width="197" Click="BTN_Save"/>
         <ComboBox x:Name="ComboBox" HorizontalAlignment="Left" Margin="40,305,0,0" VerticalAlignment="Top" Width="241"
                   FontFamily="Microsoft JhengHei UI Light" FontSize="12">
-            <ComboBoxItem Content="PDF"/>
-            <ComboBoxItem Content="DOCX"/>
+            <ComboBoxItem Content="PDF" FontFamily="Microsoft JhengHei UI Light" FontSize="16"/>
+            <ComboBoxItem Content="DOCX" FontFamily="Microsoft JhengHei UI Light" FontSize="16"/>
         </ComboBox>
-        <ListView x:Name="fileList" ItemsSource="{Binding SelectedFiles}" Height="210"
-                  MouseDoubleClick="ListView_MouseClick" Background="Snow">
+        <ListView x:Name="fileList" ItemsSource="{Binding SelectedFiles}" Height="210" 
+                  FontFamily="Microsoft JhengHei UI Light" FontSize="14"
+                  MouseDoubleClick="ListView_MouseClick" Background="Snow" >
             <ListView.Resources>
-                <Style x:Key="HeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+                <Style x:Key="HeaderStyle" TargetType="{x:Type GridViewColumnHeader}" > 
                     <Setter Property="IsEnabled" Value="False" />
                 </Style>
             </ListView.Resources>
